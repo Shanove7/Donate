@@ -1,38 +1,26 @@
-# Kaxel Donate — rebuild
+# Kaxel Donate
 
-Versi rebuild ini mempertahankan UI dan fitur inti sebelumnya serta menggunakan SDK resmi Betabotz Paygate untuk membuat, mengecek, dan membatalkan transaksi.
+Kaxel Support donation website with member OTP, donation history, admin dashboard, transaction monitoring, and Betabotz Paygate integration.
 
-## Konfigurasi satu file
+## Configuration priority
 
-Untuk menghindari pengaturan Environment Variables di Vercel, buka `config.js` lalu isi nilai konfigurasi yang masih kosong. File ini dipakai langsung oleh backend dan ikut dibundle bersama fungsi server. Jangan pernah menaruh nilai rahasia di `public/`.
+Edit `config.js` first. Non-empty values in this file override environment variables. For blank secret fields, the application can use the matching environment variable as a fallback. The configuration is loaded before the API reads settings.
 
-- Gunakan API key Betabotz yang benar untuk metode yang diaktifkan.
-- Gunakan `JSONBIN_ID` dan `JSONBIN_KEY` lama agar data lama tetap terhubung.
-- Isi `WASENDER_API_KEY` dan `OTP_HASH_SECRET` untuk OTP/notifikasi member.
-- Ganti `ADMIN_PASSWORD` dengan password kuat.
-- Fee dinonaktifkan secara default. Jangan aktifkan sebelum skema fee dikonfirmasi sesuai ketentuan provider.
+Required values for persistent existing data:
+- `JSONBIN_ID`: ID of the existing JSONBin that contains the current donation history
+- `JSONBIN_KEY`: JSONBin master key with read/write permission
+- `ADMIN_PASSWORD`: admin login password
 
-`config.js` berisi nilai kosong, bukan kredensial aktif. Website belum bisa memproses transaksi atau OTP sebelum konfigurasi diisi. Jangan commit file konfigurasi yang sudah berisi rahasia ke repository publik. `.env.example` tersedia untuk pengembangan lokal jika dibutuhkan.
+For payments and WhatsApp OTP, also configure the appropriate Betabotz Paygate API key and `WASENDER_API_KEY`.
 
-## Fitur yang dipertahankan
+Do not replace the existing JSONBin with a new bin if you need to retain transaction/member history. If the configured JSONBin cannot be read or written, the API now returns an actionable error instead of silently presenting an empty in-memory database as if it were the real data.
 
-- Donasi anonim dan member dengan OTP WhatsApp.
-- QRIS DANA utama, serta opsi pembayaran yang tersedia pada UI.
-- Status transaksi, invoice, notifikasi member, dashboard, level, badge, riwayat, komentar/live chat, panel admin, audit log, health monitor, dan halaman status.
-- Penyimpanan JSONBin; gunakan kredensial lama untuk mempertahankan data.
+## Deploy
 
-## Integrasi Betabotz Paygate
+Install dependencies with `npm install`, then deploy the project root to Vercel. The API is served from `api/index.js`; public pages are in `public/`.
 
-Pembuatan, pemeriksaan, dan pembatalan transaksi menggunakan `betabotz-paygate`. Callback tidak dipercaya sebagai bukti pembayaran sendirian; kode melakukan verifikasi ulang ke Paygate. Status final tetap harus diuji dengan transaksi nyata/sandbox sebelum rilis.
+Check the API diagnostic endpoint at `/api/health` (not `/health`). Do not run real payments until the gateway keys and callback URLs have been verified.
 
-Dokumentasi: https://web.btzpay.my.id/documentation
-SDK: https://www.npmjs.com/package/betabotz-paygate
+## Security
 
-## Menjalankan
-
-```bash
-npm install
-npm start
-```
-
-Pemeriksaan sintaks: `npm run check`. Lingkungan build ini tidak memiliki kredensial gateway sehingga tidak ada transaksi live yang dapat diuji di sini. JSONBin bukan database transaksional; untuk trafik besar, rencanakan migrasi ke database transaksional.
+Keep the repository private when `config.js` contains real credentials. Never commit a populated config file to a public repository. Rotate any key that was exposed publicly.
