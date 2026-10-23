@@ -10,7 +10,7 @@ const config = {
     BTZ_SHOPEEPAY_API_KEY: '',
     BTZ_SHOPEEPAY_ACCOUNT_NUMBER: '',
     BTZ_SHOPEEPAY_ACCOUNT_NAME: '',
-    ADMIN_PASSWORD: '',
+    ADMIN_PASSWORD: 'kicau1234',
     JSONBIN_ID: '',
     JSONBIN_KEY: '',
     WASENDER_API_KEY: '',
