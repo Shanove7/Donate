@@ -53,18 +53,18 @@ let memoryStore = {
 const loadDb = async () => {
     if (JSONBIN_ID && JSONBIN_KEY) {
         try {
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${encodeURIComponent(JSONBIN_ID)}/latest`, {
                 headers: { 'X-Master-Key': JSONBIN_KEY }
             })
-            const json = await res.json()
-            if (json.record) {
-                if (Array.isArray(json.record)) {
-                    memoryStore.history = json.record
-                } else if (json.record.history) {
-                    memoryStore = { ...memoryStore, ...json.record, notifications: json.record.notifications || [], comments: json.record.comments || [], users: json.record.users || [], otpChallenges: json.record.otpChallenges || [], chatMessages: json.record.chatMessages || [], notificationLogs: json.record.notificationLogs || [], auditLogs: json.record.auditLogs || [] }
-                }
+            const json = await res.json().catch(() => ({}))
+            if (!res.ok) throw new Error(`JSONBin gagal membaca data (HTTP ${res.status}). Periksa JSONBIN_ID dan JSONBIN_KEY di config.js.`)
+            if (!json.record) throw new Error('JSONBin tidak mengembalikan record. Periksa ID bin yang dikonfigurasi.')
+            if (Array.isArray(json.record)) {
+                memoryStore.history = json.record
+            } else if (json.record && typeof json.record === 'object') {
+                memoryStore = { ...memoryStore, ...json.record, goal: json.record.goal || memoryStore.goal, history: Array.isArray(json.record.history) ? json.record.history : memoryStore.history, notifications: json.record.notifications || [], comments: json.record.comments || [], users: json.record.users || [], otpChallenges: json.record.otpChallenges || [], chatMessages: json.record.chatMessages || [], notificationLogs: json.record.notificationLogs || [], auditLogs: json.record.auditLogs || [] }
             }
-        } catch (e) {}
+        } catch (e) { throw e }
     }
     return memoryStore
 }
@@ -73,7 +73,7 @@ const saveDb = async (data) => {
     memoryStore = data
     if (JSONBIN_ID && JSONBIN_KEY) {
         try {
-            await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${encodeURIComponent(JSONBIN_ID)}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -81,7 +81,8 @@ const saveDb = async (data) => {
                 },
                 body: JSON.stringify(memoryStore)
             })
-        } catch (e) {}
+            if (!res.ok) throw new Error(`JSONBin gagal menyimpan data (HTTP ${res.status}). Periksa JSONBIN_ID dan JSONBIN_KEY di config.js.`)
+        } catch (e) { throw e }
     }
 }
 
@@ -739,7 +740,7 @@ app.post('/api/admin/stats', async (req, res) => {
             history: db.history
         })
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Gagal memuat data admin.' })
+        res.status(500).json({ success: false, message: error.message || 'Gagal memuat data admin.' })
     }
 })
 
