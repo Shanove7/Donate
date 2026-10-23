@@ -11,14 +11,14 @@ const config = {
     BTZ_SHOPEEPAY_ACCOUNT_NUMBER: '',
     BTZ_SHOPEEPAY_ACCOUNT_NAME: '',
     ADMIN_PASSWORD: '',
-    JSONBIN_ID: '',
-    JSONBIN_KEY: '',
+    JSONBIN_ID: '6ad477e0ffd5d16053752e19',
+    JSONBIN_KEY: '$2a$10$X3YuElcgJSSQ8uKXLm9fWuleqRz4UzzouGvjqvOCHaWOjlOxHi/wm',
     WASENDER_API_KEY: '',
     WASENDER_API_URL: 'https://api.wasender.dev/messages/text',
     OTP_HASH_SECRET: '',
     DONATION_FEE_ENABLED: 'false',
-    MEMBER_FEE_PERCENT: '0.3',
-    ANONYMOUS_FEE_PERCENT: '0.7',
+    MEMBER_FEE_PERCENT: '0.5',
+    ANONYMOUS_FEE_PERCENT: '0.9',
     EARLY_SUPPORTER_CUTOFF: ''
 }
 
