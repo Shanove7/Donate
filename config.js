@@ -12,7 +12,7 @@ const config = {
     BTZ_SHOPEEPAY_ACCOUNT_NAME: '',
     ADMIN_PASSWORD: 'kicau1234',
     JSONBIN_ID: '6ad477e0ffd5d16053752e19',
-    JSONBIN_KEY: '',
+    JSONBIN_KEY: '$2a$10$X3YuElcgJSSQ8uKXLm9fWuleqRz4UzzouGvjqvOCHaWOjlOxHi/wm',
     WASENDER_API_KEY: '$2a$10$X3YuElcgJSSQ8uKXLm9fWuleqRz4UzzouGvjqvOCHaWOjlOxHi/wm',
     WASENDER_API_URL: 'https://api.wasender.dev/messages/text',
     OTP_HASH_SECRET: '',
